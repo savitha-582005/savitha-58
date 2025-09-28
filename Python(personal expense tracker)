@@ -1,0 +1,139 @@
+#Personal Expense Tracker 
+
+import datetime
+
+class Expense:
+    def _init_(self, amount, category, date, description=""):
+        self.amount = amount
+        self.category = category
+        self.date = date
+        self.description = description
+
+    def _str_(self):
+        return f"{self.date} | {self.category:<12} | {self.amount:>7} | {self.description}"
+
+
+class ExpenseTracker:
+    def _init_(self):
+        self.expenses = []
+
+    def add_expense(self, amount, category, description=""):
+        today = datetime.date.today()
+        expense = Expense(amount, category, today, description)
+        self.expenses.append(expense)
+        print("\n Expense added successfully!")
+
+    def view_expenses(self):
+        if not self.expenses:
+            print("\nNo expenses recorded yet.")
+            return
+        print("\n----- Expense List -----")
+        print("Index | Date       | Category     | Amount  | Description")
+        print("---------------------------------------------------------")
+        for i, exp in enumerate(self.expenses):
+            print(f"{i:<5} | {exp}")
+
+    def update_expense(self, index, amount=None, category=None, description=None):
+        if 0 <= index < len(self.expenses):
+            expense = self.expenses[index]
+            if amount:
+                expense.amount = amount
+            if category:
+                expense.category = category
+            if description:
+                expense.description = description
+            print("\n Expense updated successfully!")
+        else:
+            print("\n Invalid expense index.")
+
+    def delete_expense(self, index):
+        if 0 <= index < len(self.expenses):
+            removed = self.expenses.pop(index)
+            print(f"\n🗑 Deleted expense: {removed.category} - {removed.amount}")
+        else:
+            print("\n Invalid expense index.")
+
+    def categorize_expenses(self):
+        if not self.expenses:
+            print("\nNo expenses to categorize.")
+            return
+        print("\n----- Expenses by Category -----")
+        categories = {}
+        for exp in self.expenses:
+            categories[exp.category] = categories.get(exp.category, 0) + exp.amount
+        for cat, total in categories.items():
+            print(f"{cat}: {total}")
+
+    def total_expenses(self):
+        if not self.expenses:
+            print("\nNo expenses recorded yet.")
+            return
+        total = sum(exp.amount for exp in self.expenses)
+        print(f"\n  Total Expenses: {total}")
+
+
+# -------- Main Program --------
+def main():
+    tracker = ExpenseTracker()
+
+    while True:
+        print("\n==== Personal Expense Tracker ====")
+        print("1. Add Expense")
+        print("2. View Expenses")
+        print("3. Update Expense")
+        print("4. Delete Expense")
+        print("5. View Expenses by Category")
+        print("6. View Total Expenses")   # NEW OPTION
+        print("7. Exit")
+
+        choice = input("\nEnter your choice (1-7): ")
+
+        if choice == "1":
+            try:
+                amount = float(input("Enter amount: "))
+                category = input("Enter category (Food/Transport/Entertainment/etc): ")
+                description = input("Enter description (optional): ")
+                tracker.add_expense(amount, category, description)
+            except ValueError:
+                print(" Invalid amount entered.")
+
+        elif choice == "2":
+            tracker.view_expenses()
+
+        elif choice == "3":
+            tracker.view_expenses()
+            try:
+                index = int(input("\nEnter expense index (starting from 0) to update: "))
+                amount_input = input("Enter new amount (leave blank to skip): ")
+                amount = float(amount_input) if amount_input else None
+                category = input("Enter new category (leave blank to skip): ")
+                description = input("Enter new description (leave blank to skip): ")
+
+                tracker.update_expense(index, amount, category if category else None, description if description else None)
+            except ValueError:
+                print(" Invalid input.")
+
+        elif choice == "4":
+            tracker.view_expenses()
+            try:
+                index = int(input("\nEnter expense index (starting from 0) to delete: "))
+                tracker.delete_expense(index)
+            except ValueError:
+                print(" Invalid input.")
+
+        elif choice == "5":
+            tracker.categorize_expenses()
+
+        elif choice == "6":
+            tracker.total_expenses()   # Call total expense function
+
+        elif choice == "7":
+            print("\n Exiting... Thank you for using Expense Tracker!")
+            break
+
+        else:
+            print("\nInvalid choice. Please try again.")
+
+
+if _name_ == "_main_":
+    main()
